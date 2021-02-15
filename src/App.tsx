@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+
+import GlobalStyles from './styles/global';
 
 import Routes from './routes';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes />
-    </BrowserRouter>
+    <Fragment>
+      <BrowserRouter>
+        <Routes />
+      </BrowserRouter>
+      <GlobalStyles />
+    </Fragment>
   );
 }
 
