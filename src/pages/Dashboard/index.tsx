@@ -1,75 +1,68 @@
-import { Fragment } from 'react';
+import { Fragment, useState, FormEvent } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
+import api from '../../services/api';
 
 import logoImage from '../../assets/githubexplorer_logo.svg';
 
 
 import { Title, Form, Repositories } from './styles';
 
+interface IRepository {
+  full_name: string;
+  description: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  }
+}
+
 
 const Dashboard = () => {
+  const [newRepository, setNewRepository] = useState('');
+  const [repositories, setRepositories] = useState<IRepository[]>([]);
+
+  const handleAddRepository = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+    const response = await api.get<IRepository>(`repos/${newRepository}`);
+
+    const repository = response.data;
+
+    setRepositories([...repositories, repository]);
+    setNewRepository('');
+
+    console.log(response.data);
+  }
+
+
   return (
     <Fragment>
       <img src={logoImage} alt="Github Explorer" />
       <Title>Explore repositórios no github</Title>
 
-      <Form action="" >
-        <input placeholder="Digite o nome do repositório" />
+      <Form onSubmit={handleAddRepository} >
+        <input 
+        placeholder="Digite o nome do repositório" 
+        value={newRepository} 
+        onChange={event => setNewRepository(event.target.value)}
+        />
         <button type="submit">Pesquisar</button>
       </Form>
 
       <Repositories>
-        <a href='teste'>
-          <img 
-          src="https://avatars.githubusercontent.com/u/54960643?s=460&u=7e71446520cc286dc189118454c3c59ca52a718b&v=4" 
-          alt="Usuário"
-          />
-          <div>
-            <strong>Rocketset/Unform</strong>
-            <p>Teste do mussum</p>
-          </div>
+        {repositories.map(repository => (
+          <a key={repository.full_name} href='teste'>
+            <img 
+            src={repository.owner.avatar_url} 
+            alt={repository.owner.login}
+            />
+            <div>
+              <strong>{repository.full_name}</strong>
+              <p>{repository.description}</p>
+            </div>
 
-          <FiChevronRight size={20} />
-        </a>
-
-        <a href='teste'>
-          <img 
-          src="https://avatars.githubusercontent.com/u/54960643?s=460&u=7e71446520cc286dc189118454c3c59ca52a718b&v=4" 
-          alt="Usuário"
-          />
-          <div>
-            <strong>Rocketset/Unform</strong>
-            <p>Teste do mussum</p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </a>
-
-        <a href='teste'>
-          <img 
-          src="https://avatars.githubusercontent.com/u/54960643?s=460&u=7e71446520cc286dc189118454c3c59ca52a718b&v=4" 
-          alt="Usuário"
-          />
-          <div>
-            <strong>Rocketset/Unform</strong>
-            <p>Teste do mussum</p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </a>
-
-        <a href='teste'>
-          <img 
-          src="https://avatars.githubusercontent.com/u/54960643?s=460&u=7e71446520cc286dc189118454c3c59ca52a718b&v=4" 
-          alt="Usuário"
-          />
-          <div>
-            <strong>Rocketset/Unform</strong>
-            <p>Teste do mussum</p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </a>
+            <FiChevronRight size={20} />
+          </a>
+        ))}
       </Repositories>
     </Fragment>
   )
