@@ -1,4 +1,4 @@
-import { Fragment, useState, FormEvent } from 'react';
+import { Fragment, useState, FormEvent, useEffect } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 import api from '../../services/api';
 
@@ -20,7 +20,21 @@ interface IRepository {
 const Dashboard = () => {
   const [newRepository, setNewRepository] = useState('');
   const [inputError, setInputError] = useState('');
-  const [repositories, setRepositories] = useState<IRepository[]>([]);
+
+
+  const [repositories, setRepositories] = useState<IRepository[]>(() => {
+    const storagedRepositories = localStorage.getItem('@GithubExplorer:Repositories')
+
+    if (storagedRepositories) {
+      return JSON.parse(storagedRepositories)
+    }
+
+    return [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('@GithubExplorer:Repositories', JSON.stringify(repositories));
+  }, [repositories])
 
   const handleAddRepository = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
