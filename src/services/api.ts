@@ -1,7 +1,17 @@
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: 'https://api.github.com'
-});
+export class ApiService {
 
-export default api;
+  public get(url: string) {
+    return axios.create({
+      baseURL: url
+    })
+  }
+}
+
+// const api = axios.create({
+// });
+
+
+const apiService = new ApiService();
+export default apiService;

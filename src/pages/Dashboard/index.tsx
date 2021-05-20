@@ -8,6 +8,8 @@ import logoImage from '../../assets/githubexplorer_logo.svg';
 
 
 import { Title, Form, Repositories, Error } from './styles';
+import { useObservable } from 'react-use-observable';
+import repositoriesService from '../../services/repository';
 
 interface IRepository {
   full_name: string;
@@ -20,6 +22,8 @@ interface IRepository {
 
 
 const Dashboard = () => {
+  const [getRepos] = useObservable(() => repositoriesService.getrepositories(), [])
+
   const [newRepository, setNewRepository] = useState('');
   const [inputError, setInputError] = useState('');
 
@@ -38,24 +42,24 @@ const Dashboard = () => {
     localStorage.setItem('@GithubExplorer:Repositories', JSON.stringify(repositories));
   }, [repositories])
 
-  const handleAddRepository = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
-    event.preventDefault();
+  // const handleAddRepository = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  //   event.preventDefault();
 
-    if (!newRepository) {
-      return setInputError('Digite o autor/nome do Repositório');
-    }
+  //   if (!newRepository) {
+  //     return setInputError('Digite o autor/nome do Repositório');
+  //   }
 
-    try {
-      const response = await api.get<IRepository>(`repos/${newRepository}`); 
-      const repository = response.data;
+  //   try {
+  //     const response = await api.get<IRepository>(`repos/${newRepository}`); 
+  //     const repository = response.data;
   
-      setRepositories([...repositories, repository]);
-      setNewRepository('');
-      setInputError('');
-    } catch (err) {
-      setInputError('Erro na busca por esse repositório');
-    }
-  }
+  //     setRepositories([...repositories, repository]);
+  //     setNewRepository('');
+  //     setInputError('');
+  //   } catch (err) {
+  //     setInputError('Erro na busca por esse repositório');
+  //   }
+  // }
 
 
   return (
